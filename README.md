@@ -1,5 +1,5 @@
 # EMI-Calculator
-# See it live :- https://emicalculator.netlify.app
+# See it live :- https://calculateemi.netlify.app/
 This is a simple EMI calculator. Made by Satyanchal: [https://www.instagram.com/iamsatyanchal/](https://www.instagram.com/iamsatyanchal/).
 
 EMI Calculator 🖩
