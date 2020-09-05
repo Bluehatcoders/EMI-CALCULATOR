@@ -1,0 +1,93 @@
+
+
+
+<!--Hey boy I know Why are you here. Below is the link of the source code 👇-->
+<!--  https://github.com/Bluehatcoders/EMI-CALCULATOR  -->
+
+
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - Tailwind EMI Calculator</title>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.7.3/tailwind.min.css'><link rel="stylesheet" href="./style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<center>
+<div class="font-sans">
+	<div class="bg-gray-900 min-h-screen" id="emicalc" style="background-color: #ffffff;">
+		<div class="inset-x-0 top-0 p-4">
+			<div class="text-white mb-4">
+				<p style="color: rgb(0, 0, 0);" class="font-bold text-xl" v-if="tenure_type!=3" v-cloak>EMI</p><p class="font-bold text-xl" v-else v-cloak>EDI</p>
+				<p class="text-3xl font-black text-green-400" v-cloak><span class="font-medium">₹</span> {{ emi | formatNumber }} <span class="text-base" v-if="tenure_type!=3">per month</span><span class="text-base" v-else>per day</span></p>
+				<p class="text-sm text-white" v-if="tenure_type!=3" v-cloak>for {{ tenure_in_months }} <span v-if="tenure_in_months == 1">month</span><span v-else>months</span></p><p class="text-sm text-white" v-else v-cloak>for {{ tenure_in_months }} <span v-if="tenure_in_months == 1">day</span><span v-else>days</span></p>
+			</div>
+			<div class="text-white">
+				<p class="font-bold text-xl" style="color: rgb(0, 0, 0);">Total Interest that you'll pay</p>
+				<p class="text-3xl font-black text-green-400" v-cloak><span class="font-medium">₹</span> {{ total_interest | formatNumber }}</p>
+			</div>
+		</div>
+		<div class="inset-x-0 bottom-0 max-w-md w-full px-4 pb-4">			
+			<div class="bg-gray-200 rounded shadow py-4 px-2 mb-4">
+				<p class="text-center uppercase text-xs font-black text-gray-800">Loan Amount</p>
+				<p class="text-xs text-gray-500 text-center mb-2">Click to Enter</p>
+				<input style="outline: none;" type="number" name="" class="w-full form-input bg-transparent border-transparent text-2xl font-bold text-center p-0" v-model="loan_amount">
+				<p class="text-xs text-center mb-2 text-gray-600">{{ loan_amount | inWords }}</p>
+				<div class="range-slider px-2 mt-4">
+					<input id="loan_amount" :step="loan_range_step" class="range-slider__range" type="range"  v-bind:min="min" v-bind:max="max" v-model="loan_amount">
+				</div>
+				<p class="mt-4 mb-2 text-xs">Range Steps:</p>
+				<div class="grid xs:grid-cols-2 sm:grid-cols-4 gap-2 text-xs">					
+					<div class="col-span-1 bg-gray-300 text-center p-2 rounded shadow cursor-pointer" @click="loan_range_step=1000;loan_amount=1000;min=1000;max=100000" :class="{active:loan_range_step==1000}">One <br>Thousand</div>
+					<div class="col-span-1 bg-gray-300 text-center p-2 rounded shadow cursor-pointer" @click="loan_range_step=10000;loan_amount=10000;min=10000;max=1000000" :class="{active:loan_range_step==10000}">Ten <br>Thousand</div>
+					<div class="col-span-1 bg-gray-300 text-center p-2 rounded shadow cursor-pointer" @click="loan_range_step=100000;loan_amount=100000;min=100000;max=10000000" :class="{active:loan_range_step==100000}">One <br>Lakh</div>
+					<div class="col-span-1 bg-gray-300 text-center p-2 rounded shadow cursor-pointer" @click="loan_range_step=1000000;loan_amount=1000000;min=1000000;max=100000000" :class="{active:loan_range_step==1000000}">Ten <br>Lakh</div>
+				</div>
+			</div>
+			<div class="grid grid-cols-2 gap-4">
+				<div class="col-span-1 bg-gray-200 rounded shadow py-4 px-2">
+					<p class="text-center uppercase text-xs font-black text-gray-800">Tenure</p>
+					<div class="flex items-center justify-center">
+						<input type="number" style="outline: none;" name="" class="w-20 form-input bg-transparent border-transparent text-2xl font-bold text-center" v-model="tenure">
+						<!-- <div class="px-4 text-sm">{{ (tenure_type==1)?'month(s)':(tenure_type == 2)?'year(s)':'day(s)' }}</div> -->
+					</div>				
+					<div class="range-slider px-2 mt-2">
+						<input id="tenure" class="range-slider__range" type="range" value="1" min="1" v-bind:max="max_tenure" v-model="tenure">
+					</div>
+					<div class="flex justify-center items-center text-xs mt-4">					
+						<div class="w-1/3 bg-gray-300 text-center px-3 py-2 rounded shadow cursor-pointer" @click="tenure=1;tenure_type=3;max_tenure=90" :class="{active:tenure_type==3}">D</div>
+						<div class="w-1/3 ml-2 bg-gray-300 text-center px-3 py-2 rounded shadow cursor-pointer" @click="tenure=1;tenure_type=1;max_tenure=360" :class="{active:tenure_type==1}">M</div>
+						<div class="w-1/3 ml-2 bg-gray-300 text-center px-3 py-2 rounded shadow cursor-pointer"  @click="tenure=1;tenure_type=2;max_tenure=30" :class="{active:tenure_type==2}">Y</div>					
+					</div>
+				</div>
+				<div class="col-span-1 bg-gray-200 rounded shadow py-4 px-2">
+					<p class="text-center uppercase text-xs font-black text-gray-800">Interest</p>
+					<div class="flex items-center justify-center">
+						<input type="number" style="outline: none;" step="0.01" name="" class="w-20 form-input bg-transparent border-transparent text-2xl font-bold text-center cursor-pointer px-0" v-model="interest"><p class="-ml-2">% p.a</p>
+					</div>
+					<div class="range-slider px-2 mt-2">
+						<input id="interest" class="range-slider__range" type="range" value="12" min="1" max="365" v-model="interest">
+					</div>
+					<div class="flex items-center text-xs mt-4">					
+						<div class="w-3/5 bg-gray-300 text-center p-2 rounded shadow cursor-pointer" @click="interest_type=1" :class="{active:interest_type==1}">Reducing</div>
+						<div class="w-2/5 ml-2 bg-gray-300 text-center p-2 rounded shadow cursor-pointer" @click="interest_type=2" :class="{active:interest_type==2}">Flat</div>
+					</div>
+				</div>
+			</div>			
+		</div>
+		<p class="px-4 text-xs text-center py-2 text-white md:text-left" style="color: rgb(0, 0, 0);">&copy; 2020. Satyanchal Chaudhary</p>
+	</div>
+
+	
+</div>
+</center>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js'></script>
+<script src='https://unpkg.com/vue-cookies@1.7.3/vue-cookies.js'></script><script  src="./script.js"></script>
+
+</body>
+</html>
